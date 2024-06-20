@@ -1,0 +1,21 @@
+# ninja log v5
+1	49	7405997161889783	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-mkdir	73d17defc0830e43
+1	49	7405997161889783	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-mkdir	73d17defc0830e43
+1917	1972	7405997181097785	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-update	ea2f66ee3f5135c4
+49	1917	7405997180527942	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-download	7ee863149a3b7dc2
+1917	1972	7405997181097785	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-update	ea2f66ee3f5135c4
+49	1917	7405997180527942	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-download	7ee863149a3b7dc2
+1983	2033	7405997181707733	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-patch	26ffd36d0cfdfdee
+1983	2033	7405997181707733	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-patch	26ffd36d0cfdfdee
+2033	2083	7405997182219058	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-configure	4ce1b0a4e3435d6a
+2033	2083	7405997182219058	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-configure	4ce1b0a4e3435d6a
+2083	2134	7405997182729356	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-build	267957246604aea1
+2182	2229	7405997183688133	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-test	9c22a876a43ad7f6
+2083	2134	7405997182729356	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-build	267957246604aea1
+2134	2182	7405997183213109	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-install	eb9e525c3aeb1ba5
+2134	2182	7405997183213109	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-install	eb9e525c3aeb1ba5
+2182	2229	7405997183688133	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-test	9c22a876a43ad7f6
+2229	2297	7405997184355547	CMakeFiles/sdl2-populate-complete	a9c423d070a2cb36
+2229	2297	7405997184355547	sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-done	a9c423d070a2cb36
+2229	2297	7405997184355547	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/CMakeFiles/sdl2-populate-complete	a9c423d070a2cb36
+2229	2297	7405997184355547	M:/TP/Projekt_4/tp_projekt_4/out/build/x64-Debug/SDL2_gfx/sdl2-subbuild/sdl2-populate-prefix/src/sdl2-populate-stamp/sdl2-populate-done	a9c423d070a2cb36
