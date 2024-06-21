@@ -1,6 +1,4 @@
 #include "planar_quadrotor_visualizer.h"
-#include <cmath>   // For math functions and constants
-
 #include "SDL2_gfx/SDL2_gfxPrimitives.h"
 
 #ifndef M_PI
@@ -14,7 +12,7 @@
 PlanarQuadrotorVisualizer::PlanarQuadrotorVisualizer(PlanarQuadrotor* quadrotor_ptr)
     : quadrotor_ptr(quadrotor_ptr), previous_theta(0) {}
 
-float interpolate_theta(float previous_theta, float current_theta) {
+float interpolate_theta (float current_theta, float previous_theta) {
 
     float angle_difference = current_theta - previous_theta;
     
@@ -38,8 +36,12 @@ void PlanarQuadrotorVisualizer::render(std::shared_ptr<SDL_Renderer>& gRenderer)
     q_y = state[1];
     q_theta = state[2];
 
-    q_theta = interpolate_theta(previous_theta, q_theta);
+    q_theta = interpolate_theta(q_theta, previous_theta);
     previous_theta = q_theta;
+
+    x_history.push_back(q_x);
+    y_history.push_back(q_y);
+    theta_history.push_back(q_theta);
 
     int screen_width, screen_height;
     SDL_GetRendererOutputSize(gRenderer.get(), &screen_width, &screen_height);

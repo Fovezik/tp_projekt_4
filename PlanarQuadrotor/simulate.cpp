@@ -1,4 +1,5 @@
 #include "simulate.h"
+#include "planar_quadrotor_visualizer.h"
 #include <matplot/matplot.h>
 
 Eigen::MatrixXf LQR(PlanarQuadrotor& quadrotor, float dt) {
@@ -47,31 +48,33 @@ int main(int argc, char* args[]) {
 
     if (init(gWindow, gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT) >= 0) {
 
-        std::vector<float> x_history;
-        std::vector<float> y_history;
-    	std::vector<float> theta_history;
-
-	    SDL_Event event;
+        SDL_Event event;
         bool quit = false;
         float delay;
         int x, y;
         Eigen::VectorXf state = Eigen::VectorXf::Zero(6);
 
+        int target_x = 0;
+        int target_y = 0;
+        bool target_active = false;
+        float previous_theta = 0;
+        float current_theta = 0;
+
         while (!quit) {
-            //events
             while (SDL_PollEvent(&event) != 0) {
                 if (event.type == SDL_QUIT) {
                     quit = true;
                 }
                 else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
-                    SDL_GetMouseState(&x, &y);
+                    SDL_GetMouseState(&target_x, &target_y);
+                    target_active = true;
 
                     std::cout << '\n' << "| Current position is: " << '\n';
-                    std::cout << "| X: " << x << '\n';
-                    std::cout << "| Y: " << y << '\n';
+                    std::cout << "| X: " << target_x << '\n';
+                    std::cout << "| Y: " << target_y << '\n';
 
-                    float new_goal_x = (x - SCREEN_WIDTH / 2);
-                    float new_goal_y = -(y - SCREEN_HEIGHT / 2);
+                    float new_goal_x = (target_x - SCREEN_WIDTH / 2);
+                    float new_goal_y = -(target_y - SCREEN_HEIGHT / 2);
 
                     std::cout << '|' << '\n' << "| Going to: " << '\n';
                     std::cout << "| X: " << new_goal_x << '\n';
@@ -87,15 +90,15 @@ int main(int argc, char* args[]) {
                         figure();
 
                         subplot(3, 1, 1);
-                        plot(x_history);
+                        plot(quadrotor_visualizer.x_history);
                         title("X History:");
 
                         subplot(3, 1, 2);
-                        plot(y_history);
+                        plot(quadrotor_visualizer.y_history);
                         title("Y History:");
 
                         subplot(3, 1, 3);
-                        plot(theta_history);
+                        plot(quadrotor_visualizer.theta_history);
                         title("Theta History:");
 
                         show();
@@ -103,10 +106,25 @@ int main(int argc, char* args[]) {
                 }
             }
 
-            SDL_Delay((int)(dt*100));
+            SDL_Delay((int)(dt * 100));
 
             SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
             SDL_RenderClear(gRenderer.get());
+
+            Eigen::VectorXf state = quadrotor.GetState();
+            float screen_x = SCREEN_WIDTH / 2 + state[0];
+            float screen_y = SCREEN_HEIGHT / 2 - state[1];
+            float distance_to_target = sqrt(pow(screen_x - target_x, 2) + pow(screen_y - target_y, 2));
+
+            if (target_active) {
+                SDL_SetRenderDrawColor(gRenderer.get(), 0x00, 0x00, 0x00, 0xFF);
+                SDL_RenderDrawLine(gRenderer.get(), target_x - 5, target_y - 5, target_x + 5, target_y + 5);
+                SDL_RenderDrawLine(gRenderer.get(), target_x - 5, target_y + 5, target_x + 5, target_y - 5);
+            }
+
+            if (distance_to_target < 60) {
+                target_active = false;
+            }
 
             quadrotor_visualizer.render(gRenderer);
 
@@ -114,11 +132,6 @@ int main(int argc, char* args[]) {
 
             control(quadrotor, K);
             quadrotor.Update(dt);
-
-            state = quadrotor.GetState();
-            x_history.push_back(state[0]);
-            y_history.push_back(state[1]);
-            theta_history.push_back(state[2]);
         }
     }
     SDL_Quit();
