@@ -2,6 +2,79 @@
 #include "planar_quadrotor_visualizer.h"
 #include <matplot/matplot.h>
 
+SDL_AudioDeviceID gAudioDeviceID;
+bool gAudioInitialized = false;
+std::vector<Uint8> gAudioBuffer;
+Uint32 gAudioBufferPosition = 0;
+
+void audioCallback(void* userdata, Uint8* stream, int len) {
+    if (gAudioBuffer.empty()) {
+        return;
+    }
+
+    Uint32 remainingBytes = gAudioBuffer.size() - gAudioBufferPosition;
+    Uint32 bytesToCopy = std::min(static_cast<Uint32>(len), remainingBytes);
+
+    std::memcpy(stream, &gAudioBuffer[gAudioBufferPosition], bytesToCopy);
+
+    gAudioBufferPosition += bytesToCopy;
+
+    if (gAudioBufferPosition >= gAudioBuffer.size()) {
+        gAudioBufferPosition = 0;
+    }
+}
+
+bool loadAudioFile(const std::string& filename) {
+    
+    std::ifstream file(filename, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open audio file: " << filename << std::endl;
+        return false;
+    }
+
+    // Read all data from the file into the buffer
+    file.seekg(0, std::ios::end);
+    std::streampos fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    gAudioBuffer.resize(fileSize);
+    file.read(reinterpret_cast<char*>(&gAudioBuffer[0]), fileSize);
+    file.close();
+
+    return true;
+}
+
+int initAudio(const std::string& audioFilename) {
+    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        std::cerr << "SDL audio initialization failed: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+
+    if (!loadAudioFile(audioFilename)) {
+        std::cerr << "Failed to load audio file: " << audioFilename << std::endl;
+        return -1;
+    }
+
+    SDL_AudioSpec desiredSpec, obtainedSpec;
+    SDL_zero(desiredSpec);
+    desiredSpec.freq = 44100;
+    desiredSpec.format = AUDIO_S16SYS;
+    desiredSpec.channels = 1; 
+    desiredSpec.samples = 2048;
+    desiredSpec.callback = audioCallback;
+
+    gAudioDeviceID = SDL_OpenAudioDevice(nullptr, 0, &desiredSpec, &obtainedSpec, 0);
+    if (gAudioDeviceID == 0) {
+        std::cerr << "Failed to open audio device: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+
+    SDL_PauseAudioDevice(gAudioDeviceID, 0); // Start playing audio
+
+    gAudioInitialized = true;
+    return 0;
+}
+
 Eigen::MatrixXf LQR(PlanarQuadrotor& quadrotor, float dt) {
     Eigen::MatrixXf Eye = Eigen::MatrixXf::Identity(6, 6);
     Eigen::MatrixXf A = Eigen::MatrixXf::Zero(6, 6);
@@ -59,6 +132,12 @@ int main(int argc, char* args[]) {
         bool target_active = false;
         float previous_theta = 0;
         float current_theta = 0;
+
+        std::string audioFilename = "drone_soundeffect2.wav";
+        if (initAudio(audioFilename) < 0) {
+            std::cerr << "Failed to initialize SDL audio." << std::endl;
+            return -1;
+        }
 
         while (!quit) {
             while (SDL_PollEvent(&event) != 0) {
@@ -132,6 +211,12 @@ int main(int argc, char* args[]) {
 
             control(quadrotor, K);
             quadrotor.Update(dt);
+        }
+
+        if (gAudioInitialized) {
+            SDL_CloseAudioDevice(gAudioDeviceID);
+            SDL_QuitSubSystem(SDL_INIT_AUDIO);
+            gAudioInitialized = false;
         }
     }
     SDL_Quit();
